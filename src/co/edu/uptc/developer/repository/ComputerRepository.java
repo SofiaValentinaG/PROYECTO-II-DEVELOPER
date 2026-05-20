@@ -1,42 +1,56 @@
 package co.edu.uptc.developer.repository;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.Set;
-import java.util.TreeSet;
-import co.edu.uptc.developer.domain.Computer;
+import co.edu.uptc.developer.domain.*;
+
+
 
 public class ComputerRepository {
-    private Set<Computer> computers;
+	
+	private Map <String, Computer> computersMaps;
 
-    public ComputerRepository() {
-        this.computers = new TreeSet<>();
-    }
+	public ComputerRepository() {
+		
+		this.computersMaps = new  HashMap<>();
+	}
+	
+	
+	public void createComputer(String idComputer, Computer computer) {
+		this.computersMaps.put(idComputer, computer);
+		
+	}
+	
+	public List<Computer> findAll(){
+		return  new ArrayList <Computer>(this.computersMaps.values());
+	}
+	public Computer findById(String id) {
+		
+		return this.computersMaps.get(id);
+		
+	}
+	   public void updateComputer(String idComputer, Computer newComputer) {
+	        if (this.computersMaps.containsKey(idComputer)) {
+	            this.computersMaps.put(idComputer, newComputer);
+	        }
+	    }
+	
 
-    public void createComputer(Computer computer) {
-        this.computers.add(computer);
-    }
-
-    public Set<Computer> findAll() {
-        return this.computers;
-    }
-
-    public Computer findById(int idComputer) {
-        for (Computer c : this.computers) {
-            if (c.getComputerId() == idComputer) {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    public void updateComputer(Computer newComputer) {
-        Computer oldComputer = this.findById(newComputer.getComputerId());
-        if (oldComputer != null) {
-            this.computers.remove(oldComputer);
-            this.computers.add(newComputer);
-        }
-    }
-
-    public void deleteComputer(int idComputer) {
-        this.computers.removeIf(c -> c.getComputerId() == idComputer);
-    }
+	
+	public void deleteComputer(String id) {
+		this.computersMaps.remove(id);
+		
+	}
+	
+	public boolean existById(String id) {
+		if(this.findById(id)== null) {
+			return false;
+			
+		}
+		return true;
+	}
+	
+	
 }

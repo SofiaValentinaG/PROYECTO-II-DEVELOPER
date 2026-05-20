@@ -1,81 +1,45 @@
 package co.edu.uptc.developer.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.HashMap;
 
+import java.util.Map;
 
 import co.edu.uptc.developer.domain.Project;
 
 public class ProjectRepository {
-	private List<Project> projectList;
+	private Map <String, Project> mapProjects;
 
 	public ProjectRepository() {
 		super();
-		this.projectList = new ArrayList <>();
+		this.mapProjects = new HashMap <>();
 		
 		
 }
-	public void createProject(Project project) {
+	public void createProject(String idProject, Project project) {
+		this.mapProjects.put(idProject, project);
 		
-		projectList.add(project);
+	}
+	
+	public Map <String, Project> findAll(){
+		return this.mapProjects;
+	}
+	public Project findById(String id) {
+		
+		return this.mapProjects.get(id);
 		
 	}
-	
-	public List<Project> findAll() {
-		return this.projectList;
-	}
-	
-	public Project findById(int idProject) {
-		for(Project p: this.projectList) {
-			if(p.getIdProject()== idProject) {
-				return p;
-			}
-		}
-		
-		return null;
-	
-	}
-	
-	
-	public boolean updateProject(Project newProject) {
-		 Project oldProject= this.findById(newProject.getIdProject());
-		 if(!Objects.isNull(oldProject)) {
-			 
-				if(Objects.isNull(newProject.getNameProject())) {
-					newProject.setNameProject(oldProject.getNameProject());
-				}
-				if(Objects.isNull(newProject.getBudget())) {
-					newProject.setBudget(oldProject.getBudget());
-				}
-				
-				if(Objects.isNull(newProject.getStartDate())) {
-					newProject.setStartDate(oldProject.getStartDate());
-				}
-				if(Objects.isNull(newProject.getStatus())) {
-					newProject.setStatus(oldProject.getStatus());
-					
-				}
-				
-				
-				
-				this.projectList.remove(oldProject);
-				this.projectList.add(newProject);
-				
-				return true;
-			 
-		 }
-		 return false;
-	}
-	
-	
-	
-	 public boolean deleteProject(int idProject) {
-	        return this.projectList.removeIf(p -> p.getIdProject() == idProject);
+	   public void updateProject(String idProject, Project newProject) {
+	        if (this.mapProjects.containsKey(idProject)) {
+	            this.mapProjects.put(idProject, newProject);
+	        }
 	    }
 	
+
 	
-	
+	public void deleteProject(String id) {
+		this.mapProjects.remove(id);
+		
+	}
 	
 
 }

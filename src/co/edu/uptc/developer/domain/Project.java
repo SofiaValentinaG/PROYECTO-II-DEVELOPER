@@ -5,27 +5,43 @@ import java.util.Date;
 //Entidad asociada
 
 public class Project {
-	private int idProject;
+	
 	private String nameProject;
 	private Date startDate;
 	private double budget;
 	private Status status;
+	private String description;
 	
-	public Project(int idProject, String nameProject, Date startDate, double budget, Status status) {
+	
+	
+
+	
+	public Project(String nameProject, Date startDate, double budget, Status status, String description) {
 		super();
-		this.idProject = idProject;
 		this.nameProject = nameProject;
 		this.startDate = startDate;
 		this.budget = budget;
 		this.status = status;
+		this.description = description;
 	}
 	
-	public int getIdProject() {
-		return idProject;
+	
+	
+	
+	public String getDescription() {
+		return description;
 	}
-	public void setIdProject(int idProject) {
-		this.idProject = idProject;
+
+
+
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
+
+
+
+
 	public String getNameProject() {
 		return nameProject;
 	}
@@ -55,11 +71,12 @@ public class Project {
 	public String toString() {
 	    StringBuilder sb = new StringBuilder();
 	    sb.append("\n===== Project Info =====\n");
-	    sb.append("ID Proyecto: ").append(idProject).append("\n");
+	 
 	    sb.append("Nombre: ").append(nameProject).append("\n");
 	    sb.append("Fecha de inicio: ").append(startDate).append("\n");
 	    sb.append("Presupuesto: $").append(budget).append("\n");
 	    sb.append("Estado: ").append(status).append("\n");
+	    sb.append("Descripcion: ").append(description).append("\n");
 	    sb.append("========================\n");
 	    return sb.toString();
 	}
