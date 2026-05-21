@@ -1,45 +1,51 @@
 package co.edu.uptc.developer.repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 import java.util.Map;
 
 import co.edu.uptc.developer.domain.Project;
 
 public class ProjectRepository {
-	private Map <String, Project> mapProjects;
+    private Map<String, Project> mapProjects;
 
-	public ProjectRepository() {
-		super();
-		this.mapProjects = new HashMap <>();
-		
-		
+    public ProjectRepository() {
+        this.mapProjects = new HashMap<>();
+    }
+
+  
+    public void createProject(Project project) {
+        mapProjects.put(this.generateKey(project.getIdProject(), project.getNameProject()), project);
+    }
+
+   
+    public Project findProjectByIdAndName(Long idProject, String nameProject) {
+        return mapProjects.get(this.generateKey(idProject, nameProject));
+    }
+
+  
+    public List<Project> findAll() {
+        return new ArrayList<>(mapProjects.values());
+    }
+
+  
+    public boolean deleteProjectByIdAndName(Long idProject, String nameProject) {
+        return mapProjects.remove(this.generateKey(idProject, nameProject)) != null;
+    }
+
+
+    public boolean existsByIdAndName(Long idProject, String nameProject) {
+        return mapProjects.containsKey(this.generateKey(idProject, nameProject));
+    }
+
+   
+    private String generateKey(Long idProject, String nameProject) {
+        StringBuilder key = new StringBuilder();
+        key.append(idProject);
+    
+        key.append(nameProject);
+        return key.toString();
+    }
 }
-	public void createProject(String idProject, Project project) {
-		this.mapProjects.put(idProject, project);
-		
-	}
-	
-	public Map <String, Project> findAll(){
-		return this.mapProjects;
-	}
-	public Project findById(String id) {
-		
-		return this.mapProjects.get(id);
-		
-	}
-	   public void updateProject(String idProject, Project newProject) {
-	        if (this.mapProjects.containsKey(idProject)) {
-	            this.mapProjects.put(idProject, newProject);
-	        }
-	    }
-	
 
-	
-	public void deleteProject(String id) {
-		this.mapProjects.remove(id);
-		
-	}
-	
-
-}
