@@ -8,42 +8,45 @@ import java.util.Map;
 import co.edu.uptc.developer.domain.Computer;
 
 public class ComputerRepository {
-    private Map<String, Computer> mapComputers;
+	private Map<String, Computer> mapComputers;
 
-    public ComputerRepository() {
-        this.mapComputers = new HashMap<>();
-    }
+	public ComputerRepository() {
+		this.mapComputers = new HashMap<>();
+	}
 
-    
-    public void createComputer(Computer computer) {
-        mapComputers.put(this.generateKey(computer.getIdComputer(), computer.getBrand()), computer);
-    }
+	public void createComputer(Computer computer) {
+		mapComputers.put(this.generateKey(computer.getIdComputer(), computer.getBrand()), computer);
+	}
 
+	public Computer findComputerByIdAndBrand(Long idComputer, String brand) {
+		return mapComputers.get(this.generateKey(idComputer, brand));
+	}
 
-    public Computer findComputerByIdAndBrand(Long idComputer, String brand) {
-        return mapComputers.get(this.generateKey(idComputer, brand));
-    }
+	public List<Computer> findAll() {
+		return new ArrayList<>(mapComputers.values());
+	}
 
-  
-    public List<Computer> findAll() {
-        return new ArrayList<>(mapComputers.values());
-    }
+	public boolean updateComputer(Computer newComputer) {
+		String key = this.generateKey(newComputer.getIdComputer(), newComputer.getBrand());
+		if (!mapComputers.containsKey(key)) {
+			return false; 
+		}
+		mapComputers.put(key, newComputer); 
+		return true;
+	}
 
- 
-    public boolean deleteComputerByIdAndBrand(Long idComputer, String brand) {
-        return mapComputers.remove(this.generateKey(idComputer, brand)) != null;
-    }
+	public boolean deleteComputerByIdAndBrand(Long idComputer, String brand) {
+		return mapComputers.remove(this.generateKey(idComputer, brand)) != null;
+	}
 
-  
-    public boolean existsByIdAndBrand(Long idComputer, String brand) {
-        return mapComputers.containsKey(this.generateKey(idComputer, brand));
-    }
+	public boolean existsByIdAndBrand(Long idComputer, String brand) {
+		return mapComputers.containsKey(this.generateKey(idComputer, brand));
+	}
 
- 
-    private String generateKey(Long idComputer, String brand) {
-        StringBuilder key = new StringBuilder();
-        key.append(idComputer);
-        key.append(brand);
-        return key.toString();
-    }
+	private String generateKey(Long idComputer, String brand) {
+		StringBuilder key = new StringBuilder();
+		key.append(idComputer);
+		key.append(brand);
+		return key.toString();
+	}
 }

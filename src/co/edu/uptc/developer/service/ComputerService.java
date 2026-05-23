@@ -16,9 +16,9 @@ public class ComputerService {
   
     public boolean createComputer(Computer computer) {
         if (computerRepository.existsByIdAndBrand(computer.getIdComputer(), computer.getBrand())) {
-            return false; // esto se hace si ya existe
+            return false; 
         }
-        computerRepository.createComputer(computer);// se hace si no existe
+        computerRepository.createComputer(computer);
         return true;
     }
 
@@ -57,12 +57,12 @@ public class ComputerService {
             computer.setStorageCapacity(computerAux.getStorageCapacity());
         }
 
-        computerRepository.createComputer(computer);
+        computerRepository.updateComputer(computer);
         return true;
     }
 
    
-    public boolean deleteComputerById(Long idComputer, String brand) {
+    public boolean deleteComputerByIdAndBrand(Long idComputer, String brand) {
         return computerRepository.deleteComputerByIdAndBrand(idComputer, brand);
     }
 }

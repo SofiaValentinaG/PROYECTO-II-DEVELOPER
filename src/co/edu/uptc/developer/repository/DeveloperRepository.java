@@ -1,6 +1,9 @@
 package co.edu.uptc.developer.repository;
 
+
+
 import java.util.LinkedHashMap;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -24,6 +27,15 @@ public class DeveloperRepository {
 
 	public List<Developer> findAll() {
 		return new ArrayList<>(mapDevelopers.values());
+	}
+
+	public boolean updateDeveloper(Developer newDeveloper) {
+		String key = this.generateKey(newDeveloper.getIdDeveloper(), newDeveloper.getName());
+		if (!mapDevelopers.containsKey(key)) {
+			return false;
+		}
+		mapDevelopers.put(key, newDeveloper);
+		return true;
 	}
 
 	public boolean deleteDeveloperByIdAndName(Long idDeveloper, String name) {
