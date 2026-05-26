@@ -11,10 +11,10 @@ public class Project {
 	private String nameProject;
 	private Date startDate;
 	private double budget;
-	private Status status;
+	private StatusEnum status;
 	private String description;
 
-	public Project(Long idProject, String nameProject, Date startDate, double budget, Status status,
+	public Project(Long idProject, String nameProject, Date startDate, double budget, StatusEnum status,
 			String description) {
 		super();
 		this.idProject = idProject;
@@ -57,11 +57,11 @@ public class Project {
 		this.budget = budget;
 	}
 
-	public Status getStatus() {
+	public StatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(Status status) {
+	public void setStatus(StatusEnum status) {
 		this.status = status;
 	}
 
