@@ -15,7 +15,7 @@ public class ProjectService {
 		this.projectRepository = new ProjectRepository();
 	}
 
-	public boolean createDeveloper(Project project) {
+	public boolean createProject(Project project) {
 		if (projectRepository.existsByIdAndName(project.getIdProject(), project.getNameProject())) {
 			return false;
 		}
@@ -23,7 +23,7 @@ public class ProjectService {
 		return true;
 	}
 
-	public Project findDeveloperById(Long id, String nameProject) {
+	public Project findProjectById(Long id, String nameProject) {
 		return projectRepository.findProjectByIdAndName(id, nameProject);
 	}
 
@@ -60,7 +60,7 @@ public class ProjectService {
 		return true;
 	}
 
-	public boolean deleteprojectByIdAndName(Long idProject, String nameProject) {
+	public boolean deleteProjectByIdAndName(Long idProject, String nameProject) {
 		return projectRepository.deleteProjectByIdAndName(idProject, nameProject);
 	}
 }
