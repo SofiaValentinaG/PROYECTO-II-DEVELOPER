@@ -6,16 +6,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import co.edu.uptc.developer.dto.ResultDTO;
+import co.edu.uptc.developer.service.ComputerService;
 import co.edu.uptc.developer.ui.controller.ComputerController;
 
 public class ComputerControllerTest {
 
 	private ComputerController computerController;
+	private ComputerService computerService;
 
-	@BeforeEach
-	void setUp() {
-		computerController = new ComputerController();
-	}
+	
+
+    @BeforeEach
+    void setUp() {
+        computerController = new ComputerController(computerService);
+    }
 
 	@Test
 	void testCreateComputerSuccess() {

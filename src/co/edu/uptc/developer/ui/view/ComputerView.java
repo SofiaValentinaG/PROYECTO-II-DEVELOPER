@@ -11,8 +11,8 @@ public class ComputerView {
 
 	private ComputerController computerController;
 
-	public ComputerView() {
-		this.computerController = new ComputerController();
+	public ComputerView(ComputerController computerController) {
+		this.computerController = computerController;
 	}
 
 	public void menu() {

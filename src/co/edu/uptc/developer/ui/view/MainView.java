@@ -1,19 +1,40 @@
 package co.edu.uptc.developer.ui.view;
 
 import java.text.ParseException;
-
 import javax.swing.JOptionPane;
+
+import co.edu.uptc.developer.service.ComputerService;
+import co.edu.uptc.developer.service.DeveloperService;
+import co.edu.uptc.developer.service.ProjectService;
+
+import co.edu.uptc.developer.ui.controller.ComputerController;
+import co.edu.uptc.developer.ui.controller.DeveloperController;
+import co.edu.uptc.developer.ui.controller.ProjectContoller;
 
 public class MainView {
 
+    private ComputerService computerService;
+    private ProjectService projectService;
+    private DeveloperService developerService;
+
     private ComputerView computerView;
-    private DeveloperView developerView;
     private ProjectView projectView;
+    private DeveloperView developerView;
 
     public MainView() {
-        this.computerView = new ComputerView();
-        this.developerView = new DeveloperView();
-        this.projectView = new ProjectView();
+      
+        this.computerService = new ComputerService();
+        this.projectService = new ProjectService();
+        this.developerService = new DeveloperService();
+
+        ComputerController computerController = new ComputerController(computerService);
+        ProjectContoller projectController = new ProjectContoller(projectService);
+        DeveloperController developerController = new DeveloperController(developerService, projectService, computerService);
+
+      
+        this.computerView = new ComputerView(computerController);
+        this.projectView = new ProjectView(projectController);
+        this.developerView = new DeveloperView(developerController);
     }
 
     public void runApp() throws ParseException {
@@ -47,6 +68,4 @@ public class MainView {
             }
         } while (option != 0);
     }
-
-    
 }

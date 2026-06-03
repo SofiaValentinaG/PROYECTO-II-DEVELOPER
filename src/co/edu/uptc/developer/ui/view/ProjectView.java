@@ -16,8 +16,8 @@ public class ProjectView {
 
     private ProjectContoller projectController;
 
-    public ProjectView() {
-        this.projectController = new ProjectContoller();
+    public ProjectView(ProjectContoller projectController) {
+        this.projectController = projectController ;
     }
 
     public void menu() throws ParseException {

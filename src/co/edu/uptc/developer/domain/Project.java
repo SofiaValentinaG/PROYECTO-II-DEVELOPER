@@ -25,6 +25,7 @@ public class Project {
 		this.description = description;
 	}
 
+	
 	public String getDescription() {
 		return description;
 	}

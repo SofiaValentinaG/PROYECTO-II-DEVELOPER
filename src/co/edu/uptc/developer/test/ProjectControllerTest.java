@@ -1,6 +1,7 @@
 package co.edu.uptc.developer.test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import co.edu.uptc.developer.service.*;
 
 import java.text.ParseException;
 
@@ -14,10 +15,11 @@ import co.edu.uptc.developer.ui.controller.ProjectContoller;
 public class ProjectControllerTest {
 
 	private ProjectContoller projectController;
+	private ProjectService  projectService;
 
 	@BeforeEach
 	void setUp() {
-		projectController = new ProjectContoller();
+		projectController = new ProjectContoller(projectService);
 	}
 
 	@Test

@@ -2,7 +2,9 @@ package co.edu.uptc.developer.ui.controller;
 
 import java.util.List;
 
+import co.edu.uptc.developer.service.ComputerService;
 import co.edu.uptc.developer.service.DeveloperService;
+import co.edu.uptc.developer.service.ProjectService;
 import co.edu.uptc.developer.domain.Computer;
 import co.edu.uptc.developer.domain.Developer;
 import co.edu.uptc.developer.domain.Project;
@@ -10,22 +12,23 @@ import co.edu.uptc.developer.dto.*;
 
 public class DeveloperController {
 	private DeveloperService developerService;
-	private ComputerController computerController;
+	private ProjectService projectService;
+	private ComputerService computerService;
 
-	public DeveloperController() {
-
-		this.developerService = new DeveloperService();
-
-	}
-
+	 public DeveloperController(DeveloperService developerService, ProjectService projectService, ComputerService computerService) {
+	        this.developerService = developerService;
+	        this.projectService = projectService;
+	        this.computerService = computerService;
+	    }
 
 	public ResultDTO createDeveloper(String idDeveloper, String name, String lastName, String mainLanguage,
-			String yearsExperience, String salary, String email, Project project, Computer computer) {
+			String yearsExperience, String salary, String email, String idComputer, String brandComputer,
+			String idProject, String nameProject) {
 
 		ResultDTO resultDTO = new ResultDTO();
 		resultDTO.setSuccessful(true);
+		validateRequiredFields(idDeveloper,  name, mainLanguage, email, idComputer,  brandComputer,idProject, nameProject);
 
-		validateRequiredFields(idDeveloper, name, mainLanguage, email, project, computer);
 		validateNumericField("ID del developer", idDeveloper, resultDTO, true);
 		validateAlphanumericField("Nombre", name, "^[a-zA-ZÁÉÍÓÚáéíóúÑñ ]+$", resultDTO, true);
 		validateAlphanumericField("Apellido", lastName, "^[a-zA-ZÁÉÍÓÚáéíóúÑñ ]+$", resultDTO, false);
@@ -34,47 +37,26 @@ public class DeveloperController {
 		validateNumericField("Salario", salary, resultDTO, false);
 		validateAlphanumericField("Email", email, "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", resultDTO, true);
 
+		Computer computer = computerService.findComputerById(Long.parseLong(idComputer), brandComputer);
 		if (computer == null) {
 			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El computador no puede ser nulo.");
-		} else {
-			ResultDTO computerValidation = computerController.createComputer(String.valueOf(computer.getIdComputer()),
-					computer.getBrand(), computer.getProcessor(), String.valueOf(computer.getRamMemory()),
-					computer.getOperationSystem(), String.valueOf(computer.getStorageCapacity()));
-
-			if (!computerValidation.isSuccessful()) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().addAll(computerValidation.getListMessageError());
-			}
+			resultDTO.getListMessageError().add("No existe un computador con ese ID y marca.");
 		}
 
+		Project project = projectService.findProjectById(Long.parseLong(idProject), nameProject);
 		if (project == null) {
 			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El proyecto no puede ser nulo.");
-		} else {
-			validateNumericField("ID del proyecto", String.valueOf(project.getIdProject()), resultDTO, true);
-			validateAlphanumericField("Nombre del proyecto", project.getNameProject(), "^[a-zA-ZÁÉÍÓÚáéíóúÑñ ]+$",
-					resultDTO, true);
-			if (project.getStartDate() == null) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("La fecha de inicio del proyecto no puede ser nula.");
-			}
-			if (project.getBudget() <= 0) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El presupuesto debe ser mayor a 0.");
-			}
-			if (project.getStatus() == null) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El estado del proyecto no puede ser nulo.");
-			}
+			resultDTO.getListMessageError().add("No existe un proyecto con ese ID y nombre.");
 		}
 
 		if (!resultDTO.isSuccessful()) {
 			return resultDTO;
 		}
 
-		boolean result = developerService.createDeveloper(new Developer(Long.parseLong(idDeveloper), name, lastName,
-				mainLanguage, Integer.parseInt(yearsExperience), Double.parseDouble(salary), email, project, computer));
+		Developer developer = new Developer(Long.parseLong(idDeveloper), name, lastName, mainLanguage,
+				Integer.parseInt(yearsExperience), Double.parseDouble(salary), email, project, computer);
+
+		boolean result = developerService.createDeveloper(developer);
 
 		if (!result) {
 			resultDTO.setSuccessful(false);
@@ -86,10 +68,8 @@ public class DeveloperController {
 		return resultDTO;
 	}
 
-
-
 	private ResultDTO validateRequiredFields(String idDeveloper, String name, String mainLanguage, String email,
-			Project project, Computer computer) {
+			String idProject, String nameProject, String idComputer, String brand) {
 		ResultDTO resultDTO = new ResultDTO();
 		resultDTO.setSuccessful(true);
 
@@ -112,50 +92,30 @@ public class DeveloperController {
 			resultDTO.setSuccessful(false);
 			resultDTO.getListMessageError().add("El email no puede ser null ni vacío");
 		}
-
-		if (computer == null) {
+		if (idProject == null || idProject.trim().isEmpty()) {
 			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El computador no puede ser null");
-		} else {
-			if (computer.getBrand() == null || computer.getBrand().trim().isEmpty()) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("La marca del computador no puede ser null ni vacía");
-			}
-			if (computer.getProcessor() == null || computer.getProcessor().trim().isEmpty()) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El procesador no puede ser null ni vacío");
-			}
-			if (computer.getOperationSystem() == null || computer.getOperationSystem().trim().isEmpty()) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El sistema operativo no puede ser null ni vacío");
-			}
-			if (computer.getStorageCapacity() <= 0) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("La capacidad de almacenamiento debe ser mayor a 0");
-			}
+			resultDTO.getListMessageError().add("El id del proyecto no puede ser null ni vacío");
 		}
 
-		if (project == null) {
+		if (nameProject == null || nameProject.trim().isEmpty()) {
 			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El proyecto no puede ser null");
-		} else {
-			if (project.getNameProject() == null || project.getNameProject().trim().isEmpty()) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El nombre del proyecto no puede ser null ni vacío");
-			}
-			if (project.getStartDate() == null) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("La fecha de inicio del proyecto no puede ser null");
-			}
-			if (project.getBudget() <= 0) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El presupuesto debe ser mayor a 0");
-			}
-			if (project.getStatus() == null) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El estado del proyecto no puede ser null");
-			}
+			resultDTO.getListMessageError().add("El nombre del proyecto no puede ser null ni vacío");
 		}
+		if (idComputer == null || idComputer.trim().isEmpty()) {
+			resultDTO.setSuccessful(false);
+			resultDTO.getListMessageError().add("El id del computador no puede ser null ni vacío");
+		}
+
+		if (brand == null || brand.trim().isEmpty()) {
+			resultDTO.setSuccessful(false);
+			resultDTO.getListMessageError().add("la marca del computador no puede ser null ni vacío");
+		}
+
+
+		
+
+		
+		
 
 		return resultDTO;
 	}
@@ -171,7 +131,8 @@ public class DeveloperController {
 		return resultDTO;
 	}
 
-	private ResultDTO validateAlphanumericField(String nameValidation, String field, String pattern,ResultDTO resultDTO, boolean required) {
+	private ResultDTO validateAlphanumericField(String nameValidation, String field, String pattern,
+			ResultDTO resultDTO, boolean required) {
 		boolean result = field.matches(pattern);
 		if ((!required) && (field == null || field.trim().isBlank())) {
 			return resultDTO;
@@ -183,12 +144,12 @@ public class DeveloperController {
 		return resultDTO;
 	}
 
-	// CORREGIDO
+
 	public List<Developer> listDevelopers() {
 		return developerService.findAll();
 	}
 
-	// CORREGIDO
+
 
 	public ResultDTO findDeveloperrByIdAndName(String idDeveloper, String name) {
 		ResultDTO resultDTO = validateRequiredFieldsForKey(idDeveloper, name);
@@ -219,78 +180,34 @@ public class DeveloperController {
 		return resultDTO;
 	}
 
-	
 	public ResultDTO updateDeveloper(String idDeveloper, String name, String lastName, String mainLanguage,
-			String yearsExperience, String salary, String email, Project project, Computer computer) {
+			String yearsExperience, String salary, String email, String idComputer, String brandComputer,
+			String idProject, String nameProject) {
+
 		ResultDTO resultDTO = new ResultDTO();
 		resultDTO.setSuccessful(true);
 
-		if (idDeveloper == null || idDeveloper.trim().isEmpty()) {
-			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El id del desarrollador no puede ser null ni vacío");
-		}
-		if (name == null || name.trim().isEmpty()) {
-			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El nombre no puede ser null ni vacío");
-		}
-		if (lastName == null || lastName.trim().isEmpty()) {
-			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El apellido no puede ser null ni vacío");
-		}
-		if (mainLanguage == null || mainLanguage.trim().isEmpty()) {
-			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El lenguaje principal no puede ser null ni vacío");
-		}
-		if (email == null || email.trim().isEmpty()) {
-			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El email no puede ser null ni vacío");
-		}
+		validateNumericField("ID del developer", idDeveloper, resultDTO, true);
+		validateAlphanumericField("Nombre", name, "^[a-zA-ZÁÉÍÓÚáéíóúÑñ ]+$", resultDTO, true);
+		validateAlphanumericField("Apellido", lastName, "^[a-zA-ZÁÉÍÓÚáéíóúÑñ ]+$", resultDTO, false);
+		validateAlphanumericField("Lenguaje principal", mainLanguage, "^[a-zA-Z0-9 .\\-]{2,30}$", resultDTO, true);
+		validateNumericField("Años de experiencia", yearsExperience, resultDTO, false);
+		validateNumericField("Salario", salary, resultDTO, false);
+		validateAlphanumericField("Email", email, "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", resultDTO, true);
 
+		Computer computer = computerService.findComputerById(Long.parseLong(idComputer), brandComputer);
 		if (computer == null) {
 			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El computador no puede ser null");
-		} else {
-			if (computer.getBrand() == null || computer.getBrand().trim().isEmpty()) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("La marca del computador no puede ser null ni vacía");
-			}
-			if (computer.getProcessor() == null || computer.getProcessor().trim().isEmpty()) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El procesador no puede ser null ni vacío");
-			}
-			if (computer.getOperationSystem() == null || computer.getOperationSystem().trim().isEmpty()) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El sistema operativo no puede ser null ni vacío");
-			}
-			if (computer.getStorageCapacity() <= 0) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("La capacidad de almacenamiento debe ser mayor a 0");
-			}
+			resultDTO.getListMessageError().add("No existe un computador con ese ID y marca.");
 		}
 
+		Project project = projectService.findProjectById(Long.parseLong(idProject), nameProject);
 		if (project == null) {
 			resultDTO.setSuccessful(false);
-			resultDTO.getListMessageError().add("El proyecto no puede ser nulo");
-		} else {
-			if (project.getNameProject() == null || project.getNameProject().trim().isEmpty()) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El nombre del proyecto no puede ser null ni vacío");
-			}
-			if (project.getStartDate() == null) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("La fecha de inicio del proyecto no puede ser null");
-			}
-			if (project.getBudget() <= 0) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El presupuesto debe ser mayor a 0");
-			}
-			if (project.getStatus() == null) {
-				resultDTO.setSuccessful(false);
-				resultDTO.getListMessageError().add("El estado del proyecto no puede ser nulo");
-			}
+			resultDTO.getListMessageError().add("No existe un proyecto con ese ID y nombre.");
 		}
 
-		if (!resultDTO.getListMessageError().isEmpty()) {
+		if (!resultDTO.isSuccessful()) {
 			return resultDTO;
 		}
 
@@ -298,17 +215,16 @@ public class DeveloperController {
 				Integer.parseInt(yearsExperience), Double.parseDouble(salary), email, project, computer);
 
 		boolean result = developerService.updateDeveloper(developer);
+
 		if (!result) {
 			resultDTO.setSuccessful(false);
 			resultDTO.getListMessageError().add("El developer no fue encontrado para actualizar.");
 		} else {
-			resultDTO.setSuccessful(true);
 			resultDTO.setMessage("Se actualizó el registro correctamente.");
 		}
 
 		return resultDTO;
 	}
-
 
 	public ResultDTO deleteDeveloper(String idDeveloper, String name) {
 		ResultDTO resultDTO = validateRequiredFieldsForKey(idDeveloper, name);

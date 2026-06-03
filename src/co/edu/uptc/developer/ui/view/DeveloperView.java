@@ -2,23 +2,17 @@ package co.edu.uptc.developer.ui.view;
 
 import javax.swing.JOptionPane;
 import java.util.List;
-import java.util.Date;
-
-import com.toedter.calendar.JDateChooser;
 
 import co.edu.uptc.developer.domain.Developer;
-import co.edu.uptc.developer.domain.Computer;
-import co.edu.uptc.developer.domain.Project;
 import co.edu.uptc.developer.dto.ResultDTO;
-import co.edu.uptc.developer.enums.StatusEnum;
 import co.edu.uptc.developer.ui.controller.DeveloperController;
 
 public class DeveloperView {
 
 	private DeveloperController developerController;
 
-	public DeveloperView() {
-		this.developerController = new DeveloperController();
+	public DeveloperView(DeveloperController developerController) {
+		this.developerController = developerController;
 	}
 
 	public void menu() {
@@ -61,16 +55,13 @@ public class DeveloperView {
 		String salary = JOptionPane.showInputDialog("Digite el salario:");
 		String email = JOptionPane.showInputDialog("Digite el correo electrónico:");
 
-		JDateChooser dateChooser = new JDateChooser();
-		JOptionPane.showMessageDialog(null, dateChooser, "Seleccione la fecha de inicio del proyecto",
-				JOptionPane.PLAIN_MESSAGE);
-		Date fechaInicio = dateChooser.getDate();
-
-		Project project = new Project(1L, "Proyecto X", fechaInicio, 5000.0, StatusEnum.PLANNING, "Proyecto demo");
-		Computer computer = new Computer(1L, "Dell", "Intel i7", 16, "Windows 11", 512);
+		String idComputer = JOptionPane.showInputDialog("Digite el ID del computador:");
+		String brandComputer = JOptionPane.showInputDialog("Digite la marca del computador:");
+		String idProject = JOptionPane.showInputDialog("Digite el ID del proyecto:");
+		String nameProject = JOptionPane.showInputDialog("Digite el nombre del proyecto:");
 
 		ResultDTO resultDTO = developerController.createDeveloper(id, name, lastName, mainLanguage, yearsExperience,
-				salary, email, project, computer);
+				salary, email, idComputer, brandComputer, idProject, nameProject);
 
 		if (!resultDTO.isSuccessful()) {
 			JOptionPane.showMessageDialog(null, String.join("\n", resultDTO.getListMessageError()), "Errores",
@@ -120,17 +111,13 @@ public class DeveloperView {
 		String salary = JOptionPane.showInputDialog("Digite el salario:");
 		String email = JOptionPane.showInputDialog("Digite el correo electrónico:");
 
-	
-		JDateChooser dateChooser = new JDateChooser();
-		JOptionPane.showMessageDialog(null, dateChooser, "Seleccione la nueva fecha de inicio del proyecto",
-				JOptionPane.PLAIN_MESSAGE);
-		Date fechaInicio = dateChooser.getDate();
-
-		Project project = new Project(1L, "Proyecto Y", fechaInicio, 6000.0, StatusEnum.PLANNING, "Proyecto demo");
-		Computer computer = new Computer(2L, "HP", "AMD Ryzen", 8, "Linux", 256);
+		String idComputer = JOptionPane.showInputDialog("Digite el ID del computador:");
+		String brandComputer = JOptionPane.showInputDialog("Digite la marca del computador:");
+		String idProject = JOptionPane.showInputDialog("Digite el ID del proyecto:");
+		String nameProject = JOptionPane.showInputDialog("Digite el nombre del proyecto:");
 
 		ResultDTO resultDTO = developerController.updateDeveloper(id, name, lastName, mainLanguage, yearsExperience,
-				salary, email, project, computer);
+				salary, email, idComputer, brandComputer, idProject, nameProject);
 
 		if (!resultDTO.isSuccessful()) {
 			JOptionPane.showMessageDialog(null, String.join("\n", resultDTO.getListMessageError()), "Errores",
@@ -153,6 +140,4 @@ public class DeveloperView {
 			JOptionPane.showMessageDialog(null, resultDTO.getMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
-
-	
 }

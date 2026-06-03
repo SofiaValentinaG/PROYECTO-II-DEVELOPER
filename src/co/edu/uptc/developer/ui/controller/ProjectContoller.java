@@ -14,9 +14,9 @@ import co.edu.uptc.developer.service.ProjectService;
 public class ProjectContoller {
 	private ProjectService projectService;
 
-	public ProjectContoller() {
+	public ProjectContoller(ProjectService projectService) {
 
-		this.projectService = new ProjectService();
+		this.projectService = projectService;
 	}
 
 	public ResultDTO createProject(String idProject, String nameProject, String startDate, String budget,StatusEnum status, String description) throws ParseException {

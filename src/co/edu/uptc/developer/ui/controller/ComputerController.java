@@ -9,9 +9,9 @@ import co.edu.uptc.developer.dto.*;
 public class ComputerController {
 	private ComputerService computerService;
 
-	public ComputerController() {
+	public ComputerController(ComputerService computerService) {
 
-		this.computerService = new ComputerService();
+		this.computerService = computerService;
 	}
 
 	public ResultDTO createComputer(String idComputer, String brand, String processor, String ramMemory,
