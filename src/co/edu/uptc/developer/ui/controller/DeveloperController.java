@@ -171,8 +171,7 @@ public class DeveloperController {
 		return resultDTO;
 	}
 
-	private ResultDTO validateAlphanumericField(String nameValidation, String field, String pattern,
-			ResultDTO resultDTO, boolean required) {
+	private ResultDTO validateAlphanumericField(String nameValidation, String field, String pattern,ResultDTO resultDTO, boolean required) {
 		boolean result = field.matches(pattern);
 		if ((!required) && (field == null || field.trim().isBlank())) {
 			return resultDTO;
